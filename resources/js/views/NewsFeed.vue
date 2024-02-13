@@ -6,8 +6,14 @@
                 Error fetching posts. Please try again later.
             </p>
         </div>
-        <!-- <ul v-else-if="posts.length > 0"> -->
-        <Post v-for="(post, postKey) in posts" :key="postKey" :post="post" />
+        <p v-else-if="isLoadingPosts">
+            <span class="animate-pulse">Loading posts...</span>
+        </p>
+        <Post
+            v-for="(post, postKey) in posts.data"
+            :key="postKey"
+            :post="post.data"
+        />
         <!-- </ul> -->
         <!-- <p v-else class="text-gray-500">No posts available.</p> -->
     </div>
@@ -25,6 +31,7 @@ const fetchPosts = async () => {
     try {
         const response = await axios.get("/api/posts");
         posts.value = response?.data;
+        console.log(posts.value);
     } catch (error) {
         console.error("Error fetching posts:", error);
         errorFetchingPosts.value = true;

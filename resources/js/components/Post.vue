@@ -10,20 +10,20 @@
                     />
                 </div>
                 <div class="ml-6">
-                    <div class="text-smm font-bold">Name User</div>
-                    <div class="text-sm text-gray-600">12 minutes</div>
+                    <div class="text-smm font-bold">
+                        {{ post?.attributes?.posted_by?.data?.attributes.name }}
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        {{ post?.attributes?.posted_at }}
+                    </div>
                 </div>
             </div>
             <div class="mt-4">
-                <p>{{ post.data }}</p>
+                <p>{{ post?.attributes?.body }}</p>
             </div>
         </div>
-        <div class="w-full">
-            <img
-                src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
-                alt="post image"
-                class="w-full"
-            />
+        <div class="w-full" v-if="post.attributes.image">
+            <img :src="post.attributes.image" alt="post image" class="w-full" />
         </div>
         <div class="px-4 pt-2 flex justify-between text-gray-700 text-sm">
             <div class="flex">

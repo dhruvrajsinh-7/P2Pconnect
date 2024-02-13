@@ -22,6 +22,7 @@ class PostFactory extends Factory
         return [
             'user_id' => User::factory(),
             'body' => $this->fake()->sentence,
+            'image' => $this->fake()->imageUrl(),
         ];
     }
 }
