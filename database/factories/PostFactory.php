@@ -4,13 +4,14 @@ namespace Database\Factories;
 
 use App\Http\Resources\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
  */
 class PostFactory extends Factory
 {
+    use HasFactory;
     /**
      * Define the model's default state.
      *
@@ -20,7 +21,7 @@ class PostFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'body' => $this->faker->sentence,
+            'body' => $this->fake()->sentence,
         ];
     }
 }

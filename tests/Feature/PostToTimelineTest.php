@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\HasApiTokens;
@@ -12,6 +13,7 @@ use Tests\TestCase;
 class PostToTimelineTest extends TestCase
 {
     use RefreshDatabase;
+    use HasFactory;
     /**
      * A basic feature test example.
      */
@@ -36,15 +38,14 @@ class PostToTimelineTest extends TestCase
                 'data' => [
                     'type' => 'posts',
                     'post_id' => $post->id,
-                    'posted_by' => [
-                        'data' => [
-                            'attributes' => [
-                                'name' => $user->name,
-                            ]
-                        ]
-                    ],
                     'attributes' => [
-                        'posted_by' => $user->name,
+                        'posted_by' => [
+                            'data' => [
+                                'attributes' => [
+                                    'name' => $user->name
+                                ]
+                            ]
+                        ],
                         'body' => 'Testing body'
                     ]
                 ],

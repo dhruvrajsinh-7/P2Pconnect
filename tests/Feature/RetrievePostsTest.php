@@ -5,12 +5,13 @@ namespace Tests\Feature;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RetrievePostsTest extends TestCase
 {
     use RefreshDatabase;
+    use HasFactory;
     /**
      * A basic feature test example.
      */
@@ -53,7 +54,7 @@ class RetrievePostsTest extends TestCase
     public function test_a_user_can_only_retrieve_their_posts(): void
     {
         $this->actingAs($user = User::factory()->create(), 'api');
-        $posts = Post::factory(2)->create();
+        $posts = Post::factory(2)->create(['user_id' => $user->id]);
         $response = $this->get('/api/posts');
         $response->assertStatus(200);
         $response->assertExactJson(

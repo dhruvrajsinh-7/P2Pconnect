@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
-class ReverseScope extends Scope
+class ReverseScope implements Scope
 {
     public function apply(Builder $builder, Model $model)
     {
