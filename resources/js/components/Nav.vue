@@ -53,7 +53,7 @@
                 </svg>
             </router-link>
             <router-link
-                to="/"
+                :to="'/users/' + authUser?.data?.user_id"
                 class="flex h-full px-6 border-b-2 border-white items-center"
             >
                 <img
@@ -90,3 +90,13 @@
         </div>
     </div>
 </template>
+<script setup>
+import { useStore } from "vuex";
+
+import { computed, onMounted } from "vue";
+const store = useStore();
+const authUser = computed(() => store.getters["User/authUser"]);
+onMounted(async () => {
+    await store.dispatch("User/fetchAuthUser");
+});
+</script>

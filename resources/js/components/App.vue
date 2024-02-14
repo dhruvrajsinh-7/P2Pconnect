@@ -12,4 +12,19 @@
 <script setup>
 import Sidebar from "./Sidebar.vue";
 import Nav from "./Nav.vue";
+import { useStore } from "vuex";
+import { onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+const store = useStore();
+const router = useRouter();
+onMounted(() => {
+    store.dispatch("User/fetchAuthUser");
+    store.dispatch("Title/setPageTitle", router.currentRoute.value.meta.title);
+});
+watch(
+    () => router.currentRoute.value.meta.title,
+    (newTitle) => {
+        store.dispatch("Title/setPageTitle", newTitle);
+    }
+);
 </script>
