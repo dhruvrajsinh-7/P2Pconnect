@@ -19,8 +19,19 @@
                     />
                 </div>
                 <p class="text-2xl text-gray-100 ml-4">
-                    {{ user.data?.attributes?.name }}
+                    {{ User?.data?.attributes?.name }}
                 </p>
+            </div>
+            <div
+                class="flex mr-12 items-center absolute bottom-0 right-0 mb-4 z-20"
+            >
+                <button
+                    v-if="FriendButtonText"
+                    @click="sendRequest()"
+                    class="py-1 px-3 bg-gray-300 rounded"
+                >
+                    {{ FriendButtonText }}
+                </button>
             </div>
         </div>
         <div v-if="errorFetchingPosts">
@@ -40,27 +51,26 @@
 </template>
 <script setup>
 import Post from "../../components/Post.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
-const user = ref([]);
+import { useStore } from "vuex";
+
 const posts = ref([]);
 const route = useRoute();
 const Postloading = ref(true);
-const Userloading = ref(true);
 const errorFetchingPosts = ref(false);
+const store = useStore();
+const User = computed(() => store.getters["Profile/User"]);
+const FriendButtonText = computed(
+    () => store.getters["Profile/FriendbuttonText"]
+);
+const sendRequest = computed(() =>
+    store.dispatch("Profile/sendRequest", route.params.userId)
+);
 onMounted(async () => {
     const id = route.params.userId;
-    try {
-        const res = await axios.get("/api/users/" + id);
-        user.value = res.data;
-        console.log(user.value);
-    } catch (error) {
-        console.log(error + "unable to fetch user from server");
-    } finally {
-        Userloading.value = false;
-    }
-
+    await store.dispatch("Profile/fetchUser", id);
     try {
         const res = await axios.get("/api/users/" + id + "/posts");
         posts.value = res.data;
