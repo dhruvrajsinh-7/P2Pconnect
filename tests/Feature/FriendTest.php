@@ -247,4 +247,18 @@ class FriendTest extends TestCase
         $responseString = json_decode($response->getContent(), true);
         $this->assertArrayHasKey('user_id', $responseString['errors']['meta']);
     }
+    public function test_a_user_can_send_a_friend_request_only_once()
+    {
+        $this->withoutExceptionHandling();
+        $this->actingAs($user = User::factory()->create(), 'api');
+        $anotheruser = User::factory()->create();
+        $this->post('/api/friend-request', [
+            'friend_id' => $anotheruser->id,
+        ])->assertStatus(200);
+        $this->post('/api/friend-request', [
+            'friend_id' => $anotheruser->id,
+        ])->assertStatus(200);
+        $friendRequest = Friend::all();
+        $this->assertCount(1, $friendRequest);
+    }
 }

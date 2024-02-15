@@ -6,20 +6,29 @@ const ProfileModule = {
         return {
             user: null,
             userStatus: null,
+            posts: null,
+            postStatus: null,
         };
     },
     mutations: {
         setUser(state, user) {
             state.user = user;
         },
+        setPosts(state, posts) {
+            state.posts = posts;
+        },
         setUserStatus(state, status) {
             state.userStatus = status;
         },
         setUserFriendShip(state, friendship) {
-            state.user.data.attributes.friendship = friendship;
+            if (state.user && state.user.data && state.user.data.attributes) {
+                state.user.data.attributes.friendship = friendship;
+            } else {
+                console.error("User data or attributes are null or undefined.");
+            }
         },
-        setButtonStatus(state, status) {
-            state.Friendbutton = status;
+        setPostStatus(state, status) {
+            state.postStatus = status;
         },
     },
     actions: {
@@ -33,15 +42,47 @@ const ProfileModule = {
                 commit("setUserStatus", "error");
             }
         },
-        async sendRequest({ commit, state }, friendId) {
-            commit("setButtonStatus", "loading");
+        async sendRequest({ commit, getters }, friendId) {
+            if (getters.FriendbuttonText !== "Add Friend") {
+                return;
+            }
             try {
                 const res = await axios.post("/api/friend-request", {
                     friend_id: friendId,
                 });
                 commit("setUserFriendShip", res.data);
+            } catch (error) {}
+        },
+        async acceptRequest({ commit, state }, userId) {
+            try {
+                const res = await axios.post("/api/friend-request-response", {
+                    user_id: userId,
+                    status: 1,
+                });
+                commit("setUserFriendShip", res.data);
+            } catch (error) {}
+        },
+        async ignoreRequest({ commit, state }, userId) {
+            try {
+                const res = await axios.delete(
+                    "/api/friend-request-response/delete",
+                    {
+                        data: {
+                            user_id: userId,
+                        },
+                    }
+                );
+                commit("setUserFriendShip", null);
+            } catch (error) {}
+        },
+        async fetchUserPost({ commit, dispatch }, userId) {
+            commit("setPostStatus", "loading");
+            try {
+                const res = await axios.get("/api/users/" + userId + "/posts");
+                commit("setPosts", res.data);
+                commit("setPostStatus", "success");
             } catch (error) {
-                commit("setButtonStatus", "Add Friend");
+                commit("setPostStatus", "error");
             }
         },
     },
@@ -49,18 +90,41 @@ const ProfileModule = {
         User(state) {
             return state.user;
         },
-        FriendbuttonText(state, getters, rootState) {
-            if (getters.friendship == null) {
-                return "Add Friend";
-            } else if (
-                getters.friendship.data.attributes.confirmed_at === null
-            ) {
-                return "Pending Friend Request";
-            }
-            return state.Friendbutton;
+        posts(state) {
+            return state.posts;
+        },
+        status(state) {
+            return {
+                user: state.userStatus,
+                posts: state.postStatus,
+            };
         },
         friendShipStatus(state) {
-            return state.user.data.attributes.friendship;
+            return state?.user?.data?.attributes.friendship;
+        },
+        FriendbuttonText(state, getters, rootState) {
+            if (
+                rootState.User?.user?.data?.user_id ===
+                state?.user?.data?.user_id
+            ) {
+                return "";
+            } else if (getters.friendShipStatus === null) {
+                return "Add Friend";
+            } else if (
+                getters.friendShipStatus?.data?.attributes?.confirmed_at ===
+                    null &&
+                getters.friendShipStatus?.data?.attributes?.friend_id !==
+                    rootState.User?.user?.data?.user_id
+            ) {
+                return "Pending Friend Request";
+            } else if (
+                getters.friendShipStatus?.data?.attributes?.confirmed_at !==
+                null
+            ) {
+                return "";
+            }
+
+            return "Accept";
         },
     },
 };

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col h-screen overflow-y-hidden">
+    <div class="flex flex-col h-screen overflow-y-hidden" v-if="authUser">
         <Nav />
         <div class="flex overflow-y-hidden flex-1">
             <Sidebar />
@@ -13,10 +13,12 @@
 import Sidebar from "./Sidebar.vue";
 import Nav from "./Nav.vue";
 import { useStore } from "vuex";
-import { onMounted, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 const store = useStore();
 const router = useRouter();
+const authUser = computed(() => store.getters["User/authUser"]);
+
 onMounted(() => {
     store.dispatch("User/fetchAuthUser");
     store.dispatch("Title/setPageTitle", router.currentRoute.value.meta.title);

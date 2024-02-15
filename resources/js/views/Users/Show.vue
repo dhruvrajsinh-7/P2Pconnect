@@ -1,5 +1,8 @@
 <template>
-    <div class="flex flex-col items-center">
+    <div
+        class="flex flex-col items-center"
+        v-if="status?.user === 'success' && User"
+    >
         <div class="relative mb-8">
             <div class="w-100 h-64 overflow-hidden z-10">
                 <img
@@ -26,24 +29,54 @@
                 class="flex mr-12 items-center absolute bottom-0 right-0 mb-4 z-20"
             >
                 <button
-                    v-if="FriendButtonText"
-                    @click="sendRequest()"
+                    v-if="FriendButtonText && FriendButtonText !== 'Accept'"
+                    @click="
+                        store.dispatch(
+                            'Profile/sendRequest',
+                            route.params.userId
+                        )
+                    "
                     class="py-1 px-3 bg-gray-300 rounded"
+                >
+                    {{ FriendButtonText }}
+                </button>
+                <button
+                    v-if="FriendButtonText && FriendButtonText === 'Accept'"
+                    @click="
+                        store.dispatch(
+                            'Profile/acceptRequest',
+                            route.params.userId
+                        )
+                    "
+                    class="mr-2 py-1 px-3 bg-blue-500 rounded"
+                >
+                    {{ FriendButtonText }}
+                </button>
+                <button
+                    v-if="FriendButtonText && FriendButtonText === 'Accept'"
+                    @click="
+                        store.dispatch(
+                            'Profile/ignoreRequest',
+                            route.params.userId
+                        )
+                    "
+                    class="py-1 px-3 bg-gray-400 rounded"
                 >
                     {{ FriendButtonText }}
                 </button>
             </div>
         </div>
-        <div v-if="errorFetchingPosts">
+        <p v-if="status?.posts === 'loading'">
+            <span class="animate-pulse">Loading posts...</span>
+        </p>
+        <div v-if="posts?.length < 1">
             <p class="text-red-500">
                 Error fetching posts. Please try again later.
             </p>
         </div>
-        <p v-else-if="Postloading">
-            <span class="animate-pulse">Loading posts...</span>
-        </p>
         <Post
-            v-for="(post, postKey) in posts.data"
+            v-else
+            v-for="(post, postKey) in posts?.data"
             :key="postKey"
             :post="post.data"
         />
@@ -56,30 +89,21 @@ import axios from "axios";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
-const posts = ref([]);
 const route = useRoute();
 const Postloading = ref(true);
 const errorFetchingPosts = ref(false);
 const store = useStore();
 const User = computed(() => store.getters["Profile/User"]);
+const posts = computed(() => store.getters["Profile/posts"]);
+const status = computed(() => store.getters["Profile/status"]);
+console.log(status);
 const FriendButtonText = computed(
     () => store.getters["Profile/FriendbuttonText"]
 );
-const sendRequest = computed(() =>
-    store.dispatch("Profile/sendRequest", route.params.userId)
-);
+
 onMounted(async () => {
     const id = route.params.userId;
     await store.dispatch("Profile/fetchUser", id);
-    try {
-        const res = await axios.get("/api/users/" + id + "/posts");
-        posts.value = res.data;
-        console.log(posts.value);
-    } catch (error) {
-        console.log(error + "unable to fetch user from server");
-        errorFetchingPosts.value = true;
-    } finally {
-        Postloading.value = false;
-    }
+    await store.dispatch("Profile/fetchUserPost", id);
 });
 </script>

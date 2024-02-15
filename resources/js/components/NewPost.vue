@@ -10,13 +10,23 @@
                     />
                 </div>
             </div>
-            <div class="flex-1 mx-4">
+            <div class="flex-1 flex mx-4">
                 <input
+                    v-model="postMessage"
                     type="text"
                     name="body"
                     class="w-full rounded-full text-sm focus:outline-none focus:shadow-outline pl-4 h-8 bg-gray-200"
                     placeholder="Add a post"
                 />
+                <transition name="fade">
+                    <button
+                        v-if="postMessage"
+                        @click="postMessagehandler"
+                        class="bg-gray-200 ml-2 px-3 py-1 rounded-full"
+                    >
+                        Post
+                    </button>
+                </transition>
             </div>
             <div>
                 <button
@@ -36,3 +46,25 @@
         </div>
     </div>
 </template>
+<script setup>
+import { computed } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
+const postMessage = computed({
+    get: () => store.getters["NewsPost/postMessage"],
+    set: (value) => store.commit("NewsPost/updateMessage", value),
+});
+const postMessagehandler = async () => {
+    await store.dispatch("NewsPost/postMessage");
+};
+</script>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

@@ -6,11 +6,11 @@
                 Error fetching posts. Please try again later.
             </p>
         </div>
-        <p v-else-if="isLoadingPosts">
+        <p v-else-if="newsStatus.newsPostsStatus === 'loading'">
             <span class="animate-pulse">Loading posts...</span>
         </p>
         <Post
-            v-for="(post, postKey) in posts.data"
+            v-for="(post, postKey) in Posts?.data"
             :key="postKey"
             :post="post.data"
         />
@@ -22,23 +22,14 @@
 <script setup>
 import NewPost from "../components/NewPost.vue";
 import Post from "../components/Post.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useStore } from "vuex";
 const isLoadingPosts = ref(true);
 const errorFetchingPosts = ref(false);
-const posts = ref([]);
-
-const fetchPosts = async () => {
-    try {
-        const response = await axios.get("/api/posts");
-        posts.value = response?.data;
-        console.log(posts.value);
-    } catch (error) {
-        console.error("Error fetching posts:", error);
-        errorFetchingPosts.value = true;
-    } finally {
-        isLoadingPosts.value = false;
-    }
-};
-
-onMounted(fetchPosts);
+const store = useStore();
+const Posts = computed(() => store.getters["NewsPost/newsPosts"]);
+const newsStatus = computed(() => store.getters["NewsPost/newsStatus"]);
+onMounted(async () => {
+    await store.dispatch("NewsPost/fetchNewsPosts");
+});
 </script>

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->tinyInteger('status')->nullable();
             $table->timestamp('confirmed_at')->nullable();
             $table->timestamps();
+            $table->unique(['user_id', 'friend_id']);
         });
     }
 
