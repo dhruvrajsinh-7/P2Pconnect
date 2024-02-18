@@ -13,6 +13,7 @@
             v-for="(post, postKey) in Posts?.data"
             :key="postKey"
             :post="post.data"
+            :postKey="postKey"
         />
         <!-- </ul> -->
         <!-- <p v-else class="text-gray-500">No posts available.</p> -->

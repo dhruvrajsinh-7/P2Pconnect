@@ -20,6 +20,10 @@ const PostModule = {
         pushPosts(state, post) {
             state.newsPosts?.data?.unshift(post);
         },
+        pushLikes(state, data) {
+            state.newsPosts.data[data.postKey].data.attributes.likes =
+                data.likes;
+        },
     },
     actions: {
         async fetchNewsPosts({ commit }) {
@@ -44,6 +48,14 @@ const PostModule = {
             } catch (error) {
                 commit("setPostsStatus", "error");
             }
+        },
+        async likePost({ commit, state }, data) {
+            try {
+                const res = await axios.post(
+                    "/api/posts/" + data.postId + "/like"
+                );
+                commit("pushLikes", { likes: res.data, postKey: data.postKey });
+            } catch {}
         },
     },
     getters: {
