@@ -22,8 +22,12 @@
                 <p>{{ post?.attributes?.body }}</p>
             </div>
         </div>
-        <div class="w-full" v-if="post.attributes.image">
-            <img :src="post.attributes.image" alt="post image" class="w-full" />
+        <div class="w-full" v-if="post?.attributes?.image">
+            <img
+                :src="post?.attributes?.image"
+                alt="post image"
+                class="w-full"
+            />
         </div>
         <div class="px-4 pt-2 flex justify-between text-gray-700 text-sm">
             <div class="flex">
@@ -36,20 +40,20 @@
                         d="M20.8 15.6c.4-.5.6-1.1.6-1.7 0-.6-.3-1.1-.5-1.4.3-.7.4-1.7-.5-2.6-.7-.6-1.8-.9-3.4-.8-1.1.1-2 .3-2.1.3-.2 0-.4.1-.7.1 0-.3 0-.9.5-2.4.6-1.8.6-3.1-.1-4.1-.7-1-1.8-1-2.1-1-.3 0-.6.1-.8.4-.5.5-.4 1.5-.4 2-.4 1.5-2 5.1-3.3 6.1l-.1.1c-.4.4-.6.8-.8 1.2-.2-.1-.5-.2-.8-.2H3.7c-1 0-1.7.8-1.7 1.7v6.8c0 1 .8 1.7 1.7 1.7h2.5c.4 0 .7-.1 1-.3l1 .1c.2 0 2.8.4 5.6.3.5 0 1 .1 1.4.1.7 0 1.4-.1 1.9-.2 1.3-.3 2.2-.8 2.6-1.6.3-.6.3-1.2.3-1.6.8-.8 1-1.6.9-2.2.1-.3 0-.6-.1-.8zM3.7 20.7c-.3 0-.6-.3-.6-.6v-6.8c0-.3.3-.6.6-.6h2.5c.3 0 .6.3.6.6v6.8c0 .3-.3.6-.6.6H3.7zm16.1-5.6c-.2.2-.2.5-.1.7 0 0 .2.3.2.7 0 .5-.2 1-.8 1.4-.2.2-.3.4-.2.6 0 0 .2.6-.1 1.1-.3.5-.9.9-1.8 1.1-.8.2-1.8.2-3 .1h-.1c-2.7.1-5.4-.3-5.4-.3H8v-7.2c0-.2 0-.4-.1-.5.1-.3.3-.9.8-1.4 1.9-1.5 3.7-6.5 3.8-6.7v-.3c-.1-.5 0-1 .1-1.2.2 0 .8.1 1.2.6.4.6.4 1.6-.1 3-.7 2.1-.7 3.2-.2 3.7.3.2.6.3.9.2.3-.1.5-.1.7-.1h.1c1.3-.3 3.6-.5 4.4.3.7.6.2 1.4.1 1.5-.2.2-.1.5.1.7 0 0 .4.4.5 1 0 .3-.2.6-.5 1z"
                     />
                 </svg>
-                <p>{{ post?.data?.attributes?.likes?.like_count }} Likes</p>
+                <p>{{ post?.attributes?.likes?.like_count }} Likes</p>
             </div>
             <div>
-                <p>123 comments</p>
+                <p>{{ post?.attributes?.comments?.comment_count }} comments</p>
             </div>
         </div>
         <div class="border-1 border-gray-400 m-4 flex justify-between">
             <button
                 class="flex focus:outline-none justify-center py-2 rounded-lg text-sm text-gray-700 w-full"
-                :class="[
-                    'post?.attributes?.likes?.user_likes_post'
-                        ? 'bg-blue-600 text:white'
-                        : '',
-                ]"
+                :class="{
+                    'bg-blue-600 text-white':
+                        post.attributes.likes.user_likes_post,
+                    'hover:bg-blue-200': !post.attributes.likes.user_likes_post,
+                }"
                 @click="
                     store.dispatch('NewsPost/likePost', {
                         postId: post?.post_id,
@@ -69,7 +73,8 @@
                 <p class="ml-2">Like</p>
             </button>
             <button
-                class="flex justify-center py-2 rounded-lg text-sm text-gray-700 w-full hover:bg-gray-200"
+                class="flex justify-center py-2 rounded-lg text-sm text-gray-700 w-full focus:outline-none"
+                @click="comments = !comments"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -83,14 +88,78 @@
                 <p>Comment</p>
             </button>
         </div>
+        <div v-if="comments" class="border-t border-gray-400 p-4 pt-2">
+            <div class="flex">
+                <input
+                    v-model="commentBody"
+                    class="w-full pl-4 h-8 bg-gray-200 rounded-lg focus:outline-none"
+                    name="comment"
+                    placeholder="Add a comment"
+                    type="text"
+                />
+                <button
+                    class="bg-gray-200 mt-2 px-2 py-1 focus:outline-none rounded"
+                    v-if="commentBody"
+                    @click="
+                        store.dispatch('NewsPost/commentPost', {
+                            body: commentBody,
+                            postId: post?.post_id,
+                            postKey: postKey,
+                        });
+                        commentBody = '';
+                    "
+                >
+                    Post
+                </button>
+            </div>
+            <div
+                class="flex my-4 items-center"
+                v-for="comment in post?.attributes?.comments?.data"
+                :key="comment?.data?.comment_id"
+            >
+                <div class="w-8">
+                    <img
+                        src="https://cdn-icons-png.freepik.com/512/3177/3177440.png"
+                    />
+                </div>
+                <div class="ml-4 flex-1">
+                    <div class="bg-gray-200 rounded-lg p-2 text-sm">
+                        <a
+                            class="font-bold text-blue-700"
+                            :href="
+                                '/users/' +
+                                comment?.data?.attributes?.commented_by?.data
+                                    ?.attributes?.user_id
+                            "
+                        >
+                            {{
+                                comment?.data?.attributes?.commented_by?.data
+                                    ?.attributes?.name
+                            }}
+                        </a>
+                        <p class="inline">
+                            {{ comment?.data?.attributes?.body }}
+                        </p>
+                    </div>
+                    <div class="tex-xs pl-2">
+                        <p>
+                            {{ comment?.data?.attributes?.commented_at }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
+
 <script setup>
 import { useStore } from "vuex";
-
+import { defineProps, ref } from "vue";
 defineProps({
     post: Object,
     postKey: Number,
 });
+const comments = ref(false);
+const commentBody = ref("");
 const store = useStore();
 </script>

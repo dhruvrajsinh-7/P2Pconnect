@@ -28,9 +28,9 @@ import { useStore } from "vuex";
 const isLoadingPosts = ref(true);
 const errorFetchingPosts = ref(false);
 const store = useStore();
-const Posts = computed(() => store.getters["NewsPost/newsPosts"]);
+const Posts = computed(() => store.getters["NewsPost/posts"]);
 const newsStatus = computed(() => store.getters["NewsPost/newsStatus"]);
 onMounted(async () => {
-    await store.dispatch("NewsPost/fetchNewsPosts");
+    await store.dispatch("NewsPost/fetchposts");
 });
 </script>

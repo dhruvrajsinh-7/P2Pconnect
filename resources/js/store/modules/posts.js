@@ -2,31 +2,34 @@ const PostModule = {
     namespaced: true,
     state() {
         return {
-            newsPosts: null,
-            newsPostsStatus: null,
+            posts: null,
+            postsStatus: null,
             postMessage: "",
         };
     },
     mutations: {
         setPosts(state, posts) {
-            state.newsPosts = posts;
+            state.posts = posts;
         },
         setPostsStatus(state, status) {
-            state.newsPostsStatus = status;
+            state.postsStatus = status;
         },
         updateMessage(state, message) {
             state.postMessage = message;
         },
         pushPosts(state, post) {
-            state.newsPosts?.data?.unshift(post);
+            state.posts.data.unshift(post);
         },
         pushLikes(state, data) {
-            state.newsPosts.data[data.postKey].data.attributes.likes =
-                data.likes;
+            state.posts.data[data.postKey].data.attributes.likes = data.likes;
+        },
+        pushComments(state, data) {
+            state.posts.data[data.postKey].data.attributes.comments =
+                data.comments;
         },
     },
     actions: {
-        async fetchNewsPosts({ commit }) {
+        async fetchposts({ commit }) {
             commit("setPostsStatus", "loading");
             try {
                 const response = await axios.get("/api/posts");
@@ -57,14 +60,38 @@ const PostModule = {
                 commit("pushLikes", { likes: res.data, postKey: data.postKey });
             } catch {}
         },
+        async commentPost({ commit, state }, data) {
+            try {
+                const res = await axios.post(
+                    "/api/posts/" + data.postId + "/comment",
+                    {
+                        body: data.body,
+                    }
+                );
+                commit("pushComments", {
+                    likes: res.data,
+                    postKey: data.postKey,
+                });
+            } catch {}
+        },
+        async fetchUserPost({ commit, dispatch }, userId) {
+            commit("setPostStatus", "loading");
+            try {
+                const res = await axios.get("/api/users/" + userId + "/posts");
+                commit("setPosts", res.data);
+                commit("setPostStatus", "success");
+            } catch (error) {
+                commit("setPostStatus", "error");
+            }
+        },
     },
     getters: {
-        newsPosts(state) {
-            return state.newsPosts;
+        posts(state) {
+            return state.posts;
         },
         newsStatus(state) {
             return {
-                newsPostsStatus: state.newsPostsStatus,
+                postsStatus: state.postsStatus,
             };
         },
         postMessage(state) {

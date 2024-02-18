@@ -6,16 +6,11 @@ const ProfileModule = {
         return {
             user: null,
             userStatus: null,
-            posts: null,
-            postStatus: null,
         };
     },
     mutations: {
         setUser(state, user) {
             state.user = user;
-        },
-        setPosts(state, posts) {
-            state.posts = posts;
         },
         setUserStatus(state, status) {
             state.userStatus = status;
@@ -26,9 +21,6 @@ const ProfileModule = {
             } else {
                 console.error("User data or attributes are null or undefined.");
             }
-        },
-        setPostStatus(state, status) {
-            state.postStatus = status;
         },
     },
     actions: {
@@ -75,23 +67,10 @@ const ProfileModule = {
                 commit("setUserFriendShip", null);
             } catch (error) {}
         },
-        async fetchUserPost({ commit, dispatch }, userId) {
-            commit("setPostStatus", "loading");
-            try {
-                const res = await axios.get("/api/users/" + userId + "/posts");
-                commit("setPosts", res.data);
-                commit("setPostStatus", "success");
-            } catch (error) {
-                commit("setPostStatus", "error");
-            }
-        },
     },
     getters: {
         User(state) {
             return state.user;
-        },
-        posts(state) {
-            return state.posts;
         },
         status(state) {
             return {

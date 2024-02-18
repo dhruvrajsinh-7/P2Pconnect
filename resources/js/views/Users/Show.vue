@@ -5,10 +5,10 @@
     >
         <div class="relative mb-8">
             <div class="w-100 h-64 overflow-hidden z-10">
-                <img
-                    src="https://cdn.pixabay.com/photo/2024/02/11/12/43/alcazar-de-segovia-8566449_1280.jpg"
-                    alt=""
-                    class="object-cover w-full"
+                <UploadableImages
+                    image-width="1500"
+                    image-height="300"
+                    location="cover"
                 />
             </div>
             <div
@@ -85,6 +85,7 @@
 <script setup>
 import Post from "../../components/Post.vue";
 import { ref, onMounted, computed } from "vue";
+import UploadableImages from "../../components/UploadableImages.vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -94,7 +95,7 @@ const Postloading = ref(true);
 const errorFetchingPosts = ref(false);
 const store = useStore();
 const User = computed(() => store.getters["Profile/User"]);
-const posts = computed(() => store.getters["Profile/posts"]);
+const posts = computed(() => store.getters["NewsPost/posts"]);
 const status = computed(() => store.getters["Profile/status"]);
 console.log(status);
 const FriendButtonText = computed(
@@ -104,6 +105,6 @@ const FriendButtonText = computed(
 onMounted(async () => {
     const id = route.params.userId;
     await store.dispatch("Profile/fetchUser", id);
-    await store.dispatch("Profile/fetchUserPost", id);
+    await store.dispatch("NewsPost/fetchUserPost", id);
 });
 </script>
