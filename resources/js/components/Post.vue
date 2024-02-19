@@ -4,7 +4,10 @@
             <div class="flex items-center">
                 <div class="w-8">
                     <img
-                        src="https://cdn-icons-png.freepik.com/512/3177/3177440.png"
+                        :src="
+                            post?.data?.attributes?.posted_by?.data?.attributes
+                                ?.profile_image?.data?.attributes?.path
+                        "
                         alt="profile  pic"
                         class="w-8 h-8 rounded-full object-cover"
                     />
@@ -119,7 +122,13 @@
             >
                 <div class="w-8">
                     <img
-                        src="https://cdn-icons-png.freepik.com/512/3177/3177440.png"
+                        :src="
+                            comment?.data?.attributes?.commented_by?.data
+                                ?.attributes?.profile_image?.data?.attributes
+                                ?.path
+                        "
+                        alt="profile  pic"
+                        class="w-8 h-8 rounded-full object-cover"
                     />
                 </div>
                 <div class="ml-4 flex-1">

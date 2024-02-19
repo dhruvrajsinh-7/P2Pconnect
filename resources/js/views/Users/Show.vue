@@ -9,16 +9,25 @@
                     image-width="1500"
                     image-height="300"
                     location="cover"
+                    alt="cover image"
+                    classes="object-cover w-full "
+                    :user-image="User?.data?.attributes?.cover_image"
                 />
             </div>
             <div
                 class="flex ml-12 items-center absolute bottom-0 left-0 -mb-8 z-20"
             >
                 <div class="w-32">
-                    <img
-                        src="https://cdn-icons-png.freepik.com/512/3177/3177440.png"
+                    <UploadableImages
+                        image-width="1500"
+                        image-height="300"
+                        location="profile"
                         alt="profile pic user"
-                        class="object-cover w-32 h-32 border-4 border-gray-200 rounded-full shadow-lg"
+                        classes="object-cover w-32 h-32 border-4 border-gray-200 rounded-full shadow-lg"
+                        :user-image="
+                            User?.data?.attributes?.profile_image?.data
+                                ?.attributes?.path
+                        "
                     />
                 </div>
                 <p class="text-2xl text-gray-100 ml-4">
@@ -41,7 +50,7 @@
                     {{ FriendButtonText }}
                 </button>
                 <button
-                    v-if="FriendButtonText && FriendButtonText === 'Accept'"
+                    v-if="FriendButtonText && FriendButtonText == 'Accept'"
                     @click="
                         store.dispatch(
                             'Profile/acceptRequest',
@@ -53,7 +62,7 @@
                     {{ FriendButtonText }}
                 </button>
                 <button
-                    v-if="FriendButtonText && FriendButtonText === 'Accept'"
+                    v-if="FriendButtonText && FriendButtonText == 'Accept'"
                     @click="
                         store.dispatch(
                             'Profile/ignoreRequest',
@@ -97,7 +106,6 @@ const store = useStore();
 const User = computed(() => store.getters["Profile/User"]);
 const posts = computed(() => store.getters["NewsPost/posts"]);
 const status = computed(() => store.getters["Profile/status"]);
-console.log(status);
 const FriendButtonText = computed(
     () => store.getters["Profile/FriendbuttonText"]
 );

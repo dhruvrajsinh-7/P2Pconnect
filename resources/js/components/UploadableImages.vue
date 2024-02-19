@@ -1,49 +1,62 @@
 <template>
     <img
-        src="https://cdn.pixabay.com/photo/2024/02/11/12/43/alcazar-de-segovia-8566449_1280.jpg"
-        alt=""
+        :src="userImage?.data?.attributes?.path"
+        :alt="alt"
         ref="userImage"
-        class="object-cover w-full"
+        :class="classes"
     />
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
 import Dropzone from "dropzone";
+import { computed, getCurrentInstance, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
 
-defineProps({
-    imageWidth: Number,
-    imageHeight: Number,
-    imageLocation: String,
-});
+const store = useStore();
+const route = useRoute();
 
-const userImage = ref(null);
-let dropzoneInstance;
-
-onMounted(() => {
-    if (userImage.value) {
-        dropzoneInstance = new Dropzone(userImage.value, settings.value);
-    }
-});
-
-const settings = () => {
+const props = defineProps([
+    "imageWidth",
+    "imageHeight",
+    "location",
+    "classes",
+    "alt",
+    "userImage",
+]);
+const dropzone = ref(null);
+const uploadedImage = ref(null);
+const authUser = computed(() => store.getters["Profile/user"]);
+const settings = computed(() => {
+    const id = route.params.userId;
     return {
         paramName: "image",
         url: "/api/user-images",
+        acceptedFiles: "image/*",
         params: {
             width: props.imageWidth,
             height: props.imageHeight,
-            location: props.imageLocation,
+            location: props.location,
         },
-        acceptedFiles: "image/*",
         headers: {
-            "X-CSRF-TOKEN": document.head.querySelector(
-                'meta[name="csrf-token"]'
-            ).content,
+            "X-CSRF-TOKEN": document.head.querySelector("meta[name=csrf-token]")
+                .content,
         },
-        success: (file, response) => {
-            alert("Uploaded successfully");
+        success: async function (e, res) {
+            alert("uploaded!");
+            await store.dispatch("User/fetchAuthUser");
+            await store.dispatch("Profile/fetchUser", id);
+            await store.dispatch("NewsPost/fetchUserPost", id);
         },
     };
-};
+});
+onMounted(() => {
+    if (authUser.value?.data?.user_id != route.params.userId) {
+        return;
+    }
+    dropzone.value = new Dropzone(
+        getCurrentInstance().ctx.$refs.userImage,
+        settings.value
+    );
+});
 </script>

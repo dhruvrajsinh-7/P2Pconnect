@@ -4,7 +4,10 @@
             <div>
                 <div class="w-8">
                     <img
-                        src="https://cdn-icons-png.freepik.com/512/3177/3177440.png"
+                        :src="
+                            authUser?.data?.attributes?.profile_image?.data
+                                ?.attributes?.path
+                        "
                         alt="profile  pic"
                         class="w-8 h-8 rounded-full object-cover"
                     />
@@ -54,6 +57,7 @@ const postMessage = computed({
     get: () => store.getters["NewsPost/postMessage"],
     set: (value) => store.commit("NewsPost/updateMessage", value),
 });
+const authUser = computed(() => store.getters["Profile/user"]);
 const postMessagehandler = async () => {
     await store.dispatch("NewsPost/postMessage");
 };

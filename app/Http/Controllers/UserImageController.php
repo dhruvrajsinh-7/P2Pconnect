@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserImage as UserImageResource;
-use Illuminate\Http\Request;
 
 class UserImageController extends Controller
 {
+
     public function store()
     {
         $data = request()->validate([
@@ -16,6 +16,7 @@ class UserImageController extends Controller
             'location' => ''
         ]);
         $image = $data['image']->store('user-images', 'public');
+        // Image::make($data['image'])->fit($data['width'], $data['height'])->save(\storage_path('app/public/user-images/' . $data['image']->hashName()));
         $userImage = auth()->user()->images()->create([
             'path' => $image,
             'width' => $data['width'],

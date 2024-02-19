@@ -57,7 +57,10 @@
                 class="flex h-full px-6 border-b-2 border-white items-center"
             >
                 <img
-                    src="https://cdn-icons-png.freepik.com/512/3177/3177440.png"
+                    :src="
+                        authUser?.data?.attributes?.profile_image?.data
+                            ?.attributes?.path
+                    "
                     alt="profile  pic"
                     class="w-8 h-8 rounded-full object-cover"
                 />

@@ -16,14 +16,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('auth-user', [AuthUserController::class, 'show']);
-    Route::apiResources([
-        '/posts' => PostController::class,
-        '/posts/{post}/like' => PostLikeController::class,
-        '/posts/{post}/comment' => PostCommentController::class,
-        '/users' => UserController::class,
-        '/users/{user}/posts' => UserPostController::class,
-        '/friend-request' => FriendRequestController::class,
-        '/friend-request-response' => FriendRequestResponseController::class,
-        '/user-image' => UserImageController::class
-    ]);
+    // Route::apiResources([
+    //     '/posts' => PostController::class,
+    //     '/posts/{post}/like' => PostLikeController::class,
+    //     '/posts/{post}/comment' => PostCommentController::class,
+    //     '/users' => UserController::class,
+    //     '/users/{user}/posts' => UserPostController::class,
+    //     '/friend-request' => FriendRequestController::class,
+    //     '/friend-request-response' => FriendRequestResponseController::class,
+    //     '/user-images' => UserImageController::class
+    // ]);
+    Route::apiResource('users', UserController::class);
+
+    Route::apiResource('posts', PostController::class);
+    Route::apiResource('users.posts', UserPostController::class);
+    Route::apiResource('friend-request', FriendRequestController::class);
+    Route::apiResource('friend-request-response', FriendRequestResponseController::class);
+    Route::apiResource('/posts/{post}/like', PostLikeController::class);
+    Route::apiResource('/posts/{post}/comment', PostCommentController::class);
+    Route::apiResource('user-images', UserImageController::class);
 });
