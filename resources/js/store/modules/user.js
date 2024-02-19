@@ -19,7 +19,6 @@ const UserModule = {
             try {
                 const res = await axios.get("/api/auth-user");
                 commit("setAuthUser", res.data);
-                console.log(res.data);
             } catch (error) {
                 console.error(error);
             }

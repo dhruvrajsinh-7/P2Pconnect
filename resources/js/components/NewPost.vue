@@ -84,7 +84,6 @@ const postMessagehandler = async () => {
     }
     store.commit("NewsPost/updateMessage", "");
 };
-console.log(store.getters["Profile/User"]);
 const settings = computed(() => {
     return {
         paramName: "image",

@@ -77,13 +77,13 @@ const PostModule = {
             }
         },
         async fetchUserPost({ commit, dispatch }, userId) {
-            commit("setPostStatus", "loading");
+            commit("setPostsStatus", "loading");
             try {
                 const res = await axios.get("/api/users/" + userId + "/posts");
                 commit("setPosts", res.data);
-                commit("setPostStatus", "success");
+                commit("setPostsStatus", "success");
             } catch (error) {
-                commit("setPostStatus", "error");
+                commit("setPostsStatus", "error");
             }
         },
     },
