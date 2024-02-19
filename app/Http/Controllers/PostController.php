@@ -17,7 +17,7 @@ class PostController extends Controller
             return new PostCollection(request()->user()->posts);
         }
         return new PostCollection(
-            Post::whereIn('user_id', [$friends->pluck('user_id'), $friends->pluck('friend_id')])
+            Post::whereIn('user_id', [...$friends->pluck('user_id'), $friends->pluck('friend_id')])
                 ->get()
         );
     }
@@ -25,9 +25,16 @@ class PostController extends Controller
     {
         $data = request()->validate([
             'body' => '',
+            'image' => '',
+            'width' => '',
+            'height' => ''
         ]);
-
-        $post = request()->user()->posts()->create($data);
+        if (isset($data['image'])) {
+            $image = $data['image']->store('post-images', 'public');
+        }
+        $post = request()->user()->posts()->create([
+            'body' => $data['body'], 'image' => !empty($image) ? 'storage/' . $image : null,
+        ]);
         return new PostResource($post);
     }
 }

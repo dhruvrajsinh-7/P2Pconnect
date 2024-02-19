@@ -5,7 +5,7 @@
                 <div class="w-8">
                     <img
                         :src="
-                            post?.data?.attributes?.posted_by?.data?.attributes
+                            post?.attributes?.posted_by?.data?.attributes
                                 ?.profile_image?.data?.attributes?.path
                         "
                         alt="profile  pic"
@@ -60,7 +60,7 @@
                 @click="
                     store.dispatch('NewsPost/likePost', {
                         postId: post?.post_id,
-                        postKey: postKey,
+                        postKey: Key,
                     })
                 "
             >
@@ -107,7 +107,7 @@
                         store.dispatch('NewsPost/commentPost', {
                             body: commentBody,
                             postId: post?.post_id,
-                            postKey: postKey,
+                            postKey: Key,
                         });
                         commentBody = '';
                     "
@@ -164,10 +164,13 @@
 <script setup>
 import { useStore } from "vuex";
 import { defineProps, ref } from "vue";
-defineProps({
+import { getCurrentInstance } from "vue";
+const Key = getCurrentInstance().vnode.key;
+
+const props = defineProps({
     post: Object,
-    postKey: Number,
 });
+
 const comments = ref(false);
 const commentBody = ref("");
 const store = useStore();

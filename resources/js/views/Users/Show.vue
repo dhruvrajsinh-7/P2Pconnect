@@ -11,7 +11,10 @@
                     location="cover"
                     alt="cover image"
                     classes="object-cover w-full "
-                    :user-image="User?.data?.attributes?.cover_image"
+                    :user-image="
+                        User?.data?.attributes?.cover_image?.data?.attributes
+                            ?.path
+                    "
                 />
             </div>
             <div

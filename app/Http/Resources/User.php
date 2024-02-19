@@ -26,11 +26,10 @@ class User extends JsonResource
                     'friendship' => new FriendResource(Friend::friendship($this->id)),
                     'cover_image' => new UserImageResource($this->coverImage),
                     'profile_image' => new UserImageResource($this->profileImage),
-
                 ]
             ],
             'links' => [
-                'self' => url('/users/' . $this->id),
+                'self' => url('/users//' . $this->id),
             ]
         ];
     }

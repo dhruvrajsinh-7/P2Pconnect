@@ -1,10 +1,5 @@
 <template>
-    <img
-        :src="userImage?.data?.attributes?.path"
-        :alt="alt"
-        ref="userImage"
-        :class="classes"
-    />
+    <img :src="userImage" :alt="alt" ref="userImage" :class="classes" />
 </template>
 
 <script setup>
@@ -26,7 +21,7 @@ const props = defineProps([
 ]);
 const dropzone = ref(null);
 const uploadedImage = ref(null);
-const authUser = computed(() => store.getters["Profile/user"]);
+const authUser = computed(() => store.getters["Profile/User"]);
 const settings = computed(() => {
     const id = route.params.userId;
     return {
@@ -51,9 +46,6 @@ const settings = computed(() => {
     };
 });
 onMounted(() => {
-    if (authUser.value?.data?.user_id != route.params.userId) {
-        return;
-    }
     dropzone.value = new Dropzone(
         getCurrentInstance().ctx.$refs.userImage,
         settings.value

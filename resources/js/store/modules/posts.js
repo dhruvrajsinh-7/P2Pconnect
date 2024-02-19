@@ -2,7 +2,7 @@ const PostModule = {
     namespaced: true,
     state() {
         return {
-            posts: null,
+            posts: [],
             postsStatus: null,
             postMessage: "",
         };
@@ -39,7 +39,7 @@ const PostModule = {
                 commit("setPostsStatus", "error");
             }
         },
-        async postMessage({ commit }) {
+        async postMessage({ commit, state }) {
             commit("setPostsStatus", "loading");
             try {
                 const response = await axios.post("/api/posts", {
@@ -69,10 +69,12 @@ const PostModule = {
                     }
                 );
                 commit("pushComments", {
-                    likes: res.data,
+                    comments: res.data,
                     postKey: data.postKey,
                 });
-            } catch {}
+            } catch {
+                console.error("Error while commenting on post.");
+            }
         },
         async fetchUserPost({ commit, dispatch }, userId) {
             commit("setPostStatus", "loading");
