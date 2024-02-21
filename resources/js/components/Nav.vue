@@ -16,25 +16,6 @@
                         />
                     </svg>
                 </router-link>
-                <!-- <div class="ml-2">
-                    <div class="ml-2 relative">
-                        <div class="absolute text-gray-700 hover:text-red-600">
-                            <svg viewBox="0 0 24 24" class="w-5 h-5 mt-2 ml-2">
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M20.2 18.1l-1.4 1.3-5.5-5.2 1.4-1.3 5.5 5.2zM7.5 12c-2.7 0-4.9-2.1-4.9-4.6s2.2-4.6 4.9-4.6 4.9 2.1 4.9 4.6S10.2 12 7.5 12zM7.5.8C3.7.8.7 3.7.7 7.3s3.1 6.5 6.8 6.5c3.8 0 6.8-2.9 6.8-6.5S11.3.8 7.5.8z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </div>
-                    </div>
-                    <input
-                        type="text"
-                        name="search"
-                        class="rounded-full w-56 pl-8 bg-gray-200 h-8 focus:outline-none focus:shadow-outline text-sm border border-gray-300 px-4"
-                        placeholder="search P2Pconnect"
-                    />
-                </div> -->
                 <div class="ml-2 relative">
                     <div
                         v-show="isTyping"
@@ -144,12 +125,13 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
 const store = useStore();
 const route = useRoute();
 const isTyping = ref(false);
 const isDropdownOpen = ref(false);
-
+const router = useRouter();
 const authUser = computed(() => store.getters["User/authUser"]);
 onMounted(async () => {
     await store.dispatch("User/fetchAuthUser");
@@ -163,6 +145,12 @@ const toggleSearchIconVisibility = () => {
 const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
+const logout = computed(() => {
+    store.dispatch("User/logout");
+    if (!store.getters["User/authUser"]) {
+        router.push("/login");
+    }
+});
 </script>
 <style scoped>
 .active-link {

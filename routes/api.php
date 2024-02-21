@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\FriendRequestResponseController;
+use App\Http\Controllers\Logoutcontroller;
 use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostLikeController;
@@ -13,6 +15,7 @@ use App\Http\Resources\User;
 use Illuminate\Support\Facades\Route;
 
 
+Route::view('/login', 'auth.login')->name('login');
 
 Route::middleware(['auth:api'])->group(function () {
     Route::get('auth-user', [AuthUserController::class, 'show']);
@@ -36,3 +39,4 @@ Route::middleware(['auth:api'])->group(function () {
     // Route::apiResource('/posts/{post}/comment', PostCommentController::class);
     // Route::apiResource('user-images', UserImageController::class);
 });
+Route::apiResource('/logout', Logoutcontroller::class);

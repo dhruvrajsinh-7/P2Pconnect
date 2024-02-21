@@ -23,6 +23,14 @@ const UserModule = {
                 console.error(error);
             }
         },
+        async logout({ commit }) {
+            try {
+                await axios.post("/logout");
+                commit("setAuthUser", null);
+            } catch (error) {
+                console.error(error);
+            }
+        },
     },
     getters: {
         authUser(state) {
