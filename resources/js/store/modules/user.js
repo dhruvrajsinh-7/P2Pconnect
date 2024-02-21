@@ -27,6 +27,7 @@ const UserModule = {
             try {
                 await axios.post("/logout");
                 commit("setAuthUser", null);
+                window.location = "/login";
             } catch (error) {
                 console.error(error);
             }
